@@ -6,11 +6,8 @@
 #   org + dreamjob-web get the big slices; the rest share smaller ones.
 
 x-runner-base: &runner-base
-  build: .
+  build: https://github.com/SIMPLEWISHTH/infra-gh-runner.git#master
   restart: unless-stopped
-  volumes:
-    - runner-data:/data
-    - /var/run/docker.sock:/var/run/docker.sock
 
 services:
   hz-org:
