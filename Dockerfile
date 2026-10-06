@@ -10,7 +10,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN curl -fsSL https://download.docker.com/linux/static/stable/x86_64/docker-27.5.1.tgz \
     | tar -xz --strip-components=1 -C /usr/local/bin docker/docker \
     && chmod +x /usr/local/bin/docker
-RUN useradd -m -u 1000 runner && mkdir -p /data && chown runner:runner /data
+# ubuntu:24.04 ships a default 'ubuntu' user at UID 1000; volumes from the old
+# debian-based fleet are owned by UID 1000, so free that UID and reuse it.
+RUN userdel -r ubuntu 2>/dev/null; useradd -m -u 1000 runner && mkdir -p /data && chown runner:runner /data
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 USER runner
