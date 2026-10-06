@@ -1,0 +1,72 @@
+# Extra org runner slots (hz-org-2..hz-org-6) on hetzner-sw02-fsn1.
+# Deployed as a STANDALONE docker compose project (gh-org-extra), independent of
+# Coolify, so Coolify redeploys of the main fleet service never orphan these.
+# Tokens are supplied via /root/org-extra.env (never committed).
+services:
+  hz-org-2:
+    build: https://github.com/SIMPLEWISHTH/infra-gh-runner.git#master
+    restart: unless-stopped
+    container_name: hz-runner-org-2
+    environment: &org-env
+      RUNNER_SCOPE_URL: https://github.com/SIMPLEWISHTH
+      RUNNER_NAME: hz-runner-org-2
+      RUNNER_LABELS: ubuntu-latest
+      RUNNER_TOKEN: ${ORG_TOKEN_2}
+    cpus: "1.5"
+    mem_limit: 3g
+    volumes: [hz-org-2-data:/data, /var/run/docker.sock:/var/run/docker.sock]
+
+  hz-org-3:
+    build: https://github.com/SIMPLEWISHTH/infra-gh-runner.git#master
+    restart: unless-stopped
+    container_name: hz-runner-org-3
+    environment:
+      <<: *org-env
+      RUNNER_NAME: hz-runner-org-3
+      RUNNER_TOKEN: ${ORG_TOKEN_3}
+    cpus: "1.5"
+    mem_limit: 3g
+    volumes: [hz-org-3-data:/data, /var/run/docker.sock:/var/run/docker.sock]
+
+  hz-org-4:
+    build: https://github.com/SIMPLEWISHTH/infra-gh-runner.git#master
+    restart: unless-stopped
+    container_name: hz-runner-org-4
+    environment:
+      <<: *org-env
+      RUNNER_NAME: hz-runner-org-4
+      RUNNER_TOKEN: ${ORG_TOKEN_4}
+    cpus: "1.5"
+    mem_limit: 3g
+    volumes: [hz-org-4-data:/data, /var/run/docker.sock:/var/run/docker.sock]
+
+  hz-org-5:
+    build: https://github.com/SIMPLEWISHTH/infra-gh-runner.git#master
+    restart: unless-stopped
+    container_name: hz-runner-org-5
+    environment:
+      <<: *org-env
+      RUNNER_NAME: hz-runner-org-5
+      RUNNER_TOKEN: ${ORG_TOKEN_5}
+    cpus: "1.5"
+    mem_limit: 3g
+    volumes: [hz-org-5-data:/data, /var/run/docker.sock:/var/run/docker.sock]
+
+  hz-org-6:
+    build: https://github.com/SIMPLEWISHTH/infra-gh-runner.git#master
+    restart: unless-stopped
+    container_name: hz-runner-org-6
+    environment:
+      <<: *org-env
+      RUNNER_NAME: hz-runner-org-6
+      RUNNER_TOKEN: ${ORG_TOKEN_6}
+    cpus: "1.5"
+    mem_limit: 3g
+    volumes: [hz-org-6-data:/data, /var/run/docker.sock:/var/run/docker.sock]
+
+volumes:
+  hz-org-2-data:
+  hz-org-3-data:
+  hz-org-4-data:
+  hz-org-5-data:
+  hz-org-6-data:
