@@ -51,3 +51,16 @@ Fleet selectors have been silently reverted **three times** by agent-generated c
 - Runner status (org): `gh api orgs/SIMPLEWISHTH/actions/runners --jq '.runners[] | [.name,.status]'` (needs org rights) or GitHub UI → org Settings → Actions → Runners.
 - Selector check for a repo: `gh api repos/<owner>/<repo>/contents/.github/workflows/<file> --jq .content | base64 -d | grep runs-on`.
 - Escalation: infra session (ZCode) can re-run the fleet-wide rescan on request.
+
+## 6. Billing verdict (Codex-confirmed 2026-10-07) — do NOT change billing
+
+- Self-hosted execution is free; the fleet needs **no payment method, no budget/limit changes**. Keep the existing `$0 / Stop usage` budgets as-is.
+- A Free org already gets 2,000 included hosted minutes/month for private repos; the card on file only matters for paid usage beyond allowances. Do not add cards to personal accounts.
+- **Queued jobs FAIL after 24 hours** waiting for a runner (they do not wait forever) — if a runner outage could exceed 24h, escalate.
+
+## 7. Disaster runbook (if fleet machines are down)
+
+1. Jobs with `[self-hosted, ...]` selectors queue and auto-resume when any runner returns. You have ~24h before queued jobs fail.
+2. **Preferred recovery = bring any runner back** (LXC9104: `systemctl start 'actions.runner.*'` on prox-01 container 9104; Hetzner: containers auto-restart with the host, or `docker compose -p gh-org-extra -f /root/org-extra.yaml up -d` for the org-extra stack).
+3. There is NO automatic GitHub-hosted fallback with self-hosted selectors. A paid emergency fallback would require: valid payment method on the **repository-owning account**, a hard Actions budget with alerts, overlapping-budget check, then **manually flipping selectors and triggering fresh runs** (reruns keep the old event/commit). The org's card does not fund personal-account repositories. Do not attempt this without the owner.
+4. After any outage: check queued runs were picked up or re-dispatch failed ones.
