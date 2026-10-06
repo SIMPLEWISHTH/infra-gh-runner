@@ -1,41 +1,69 @@
-# One service per runner scope. RUNNER_TOKEN values are injected by Coolify
-# env vars (${...}) at deploy time and are only needed the FIRST time a scope
-# registers; after that the registration persists in each service's volume.
-#
-# Per-service cpu/memory caps sum to ~80% of hetzner-sw02-fsn1 (16 vCPU / 32 GB):
-#   org + dreamjob-web get the big slices; the rest share smaller ones.
-
-x-runner-base: &runner-base
-  build: https://github.com/SIMPLEWISHTH/infra-gh-runner.git#master
-  restart: unless-stopped
-
+# Runner fleet on hetzner-sw02-fsn1 (generated; caps total ~80% of 16vCPU/32GB).
+# 3 org slots (2cpu/4g each) + repo-scoped pairs. hz-omniroute removed (repo archived).
 services:
   hz-org:
-    <<: *runner-base
+    build: https://github.com/SIMPLEWISHTH/infra-gh-runner.git#master
+    restart: unless-stopped
     container_name: hz-runner-org
-    environment: &org-env
+    environment:
       RUNNER_SCOPE_URL: https://github.com/SIMPLEWISHTH
       RUNNER_NAME: hz-runner-org
       RUNNER_LABELS: ubuntu-latest
       RUNNER_TOKEN: ${HZ_ORG_TOKEN}
-    cpus: "4"
-    mem_limit: 8g
-    volumes: [hz-org-data:/data, /var/run/docker.sock:/var/run/docker.sock]
+    cpus: "2"
+    mem_limit: 4g
+    volumes:
+      - hz-org-data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  hz-org-2:
+    build: https://github.com/SIMPLEWISHTH/infra-gh-runner.git#master
+    restart: unless-stopped
+    container_name: hz-runner-org-2
+    environment:
+      RUNNER_SCOPE_URL: https://github.com/SIMPLEWISHTH
+      RUNNER_NAME: hz-runner-org-2
+      RUNNER_LABELS: ubuntu-latest
+      RUNNER_TOKEN: ${HZ_ORG2_TOKEN}
+    cpus: "2"
+    mem_limit: 4g
+    volumes:
+      - hz-org-2-data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  hz-org-3:
+    build: https://github.com/SIMPLEWISHTH/infra-gh-runner.git#master
+    restart: unless-stopped
+    container_name: hz-runner-org-3
+    environment:
+      RUNNER_SCOPE_URL: https://github.com/SIMPLEWISHTH
+      RUNNER_NAME: hz-runner-org-3
+      RUNNER_LABELS: ubuntu-latest
+      RUNNER_TOKEN: ${HZ_ORG3_TOKEN}
+    cpus: "2"
+    mem_limit: 4g
+    volumes:
+      - hz-org-3-data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
 
   hz-dreamjob-web:
-    <<: *runner-base
+    build: https://github.com/SIMPLEWISHTH/infra-gh-runner.git#master
+    restart: unless-stopped
     container_name: hz-runner-dreamjob-web
     environment:
       RUNNER_SCOPE_URL: https://github.com/digital-simplewish/dreamjob-web
       RUNNER_NAME: hz-runner-dreamjob-web
       RUNNER_LABELS: ubuntu-latest
       RUNNER_TOKEN: ${HZ_DREAMJOB_WEB_TOKEN}
-    cpus: "4"
+    cpus: "3"
     mem_limit: 6g
-    volumes: [hz-dreamjob-web-data:/data, /var/run/docker.sock:/var/run/docker.sock]
+    volumes:
+      - hz-dreamjob-web-data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
 
   hz-dreamjobs-platform:
-    <<: *runner-base
+    build: https://github.com/SIMPLEWISHTH/infra-gh-runner.git#master
+    restart: unless-stopped
     container_name: hz-runner-dreamjobs-platform
     environment:
       RUNNER_SCOPE_URL: https://github.com/digital-simplewish/dreamjobs-platform
@@ -44,10 +72,13 @@ services:
       RUNNER_TOKEN: ${HZ_DREAMJOBS_PLATFORM_TOKEN}
     cpus: "0.6"
     mem_limit: 1g
-    volumes: [hz-dreamjobs-platform-data:/data, /var/run/docker.sock:/var/run/docker.sock]
+    volumes:
+      - hz-dreamjobs-platform-data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
 
   hz-dreamjobs-backend:
-    <<: *runner-base
+    build: https://github.com/SIMPLEWISHTH/infra-gh-runner.git#master
+    restart: unless-stopped
     container_name: hz-runner-dreamjobs-backend
     environment:
       RUNNER_SCOPE_URL: https://github.com/digital-simplewish/dreamjobs-backend
@@ -56,10 +87,13 @@ services:
       RUNNER_TOKEN: ${HZ_DREAMJOBS_BACKEND_TOKEN}
     cpus: "0.6"
     mem_limit: 1g
-    volumes: [hz-dreamjobs-backend-data:/data, /var/run/docker.sock:/var/run/docker.sock]
+    volumes:
+      - hz-dreamjobs-backend-data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
 
   hz-dj-enrich-contract:
-    <<: *runner-base
+    build: https://github.com/SIMPLEWISHTH/infra-gh-runner.git#master
+    restart: unless-stopped
     container_name: hz-runner-dj-enrich-contract
     environment:
       RUNNER_SCOPE_URL: https://github.com/digital-simplewish/dj-enrich-contract
@@ -68,10 +102,13 @@ services:
       RUNNER_TOKEN: ${HZ_DJ_ENRICH_CONTRACT_TOKEN}
     cpus: "0.6"
     mem_limit: 1g
-    volumes: [hz-dj-enrich-contract-data:/data, /var/run/docker.sock:/var/run/docker.sock]
+    volumes:
+      - hz-dj-enrich-contract-data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
 
   hz-dj-enrich-runner:
-    <<: *runner-base
+    build: https://github.com/SIMPLEWISHTH/infra-gh-runner.git#master
+    restart: unless-stopped
     container_name: hz-runner-dj-enrich-runner
     environment:
       RUNNER_SCOPE_URL: https://github.com/digital-simplewish/dj-enrich-runner
@@ -80,10 +117,13 @@ services:
       RUNNER_TOKEN: ${HZ_DJ_ENRICH_RUNNER_TOKEN}
     cpus: "0.6"
     mem_limit: 1g
-    volumes: [hz-dj-enrich-runner-data:/data, /var/run/docker.sock:/var/run/docker.sock]
+    volumes:
+      - hz-dj-enrich-runner-data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
 
   hz-dreamjobs-translayer:
-    <<: *runner-base
+    build: https://github.com/SIMPLEWISHTH/infra-gh-runner.git#master
+    restart: unless-stopped
     container_name: hz-runner-dreamjobs-translayer
     environment:
       RUNNER_SCOPE_URL: https://github.com/digital-simplewish/dreamjobs-translayer
@@ -92,10 +132,13 @@ services:
       RUNNER_TOKEN: ${HZ_DREAMJOBS_TRANSLAYER_TOKEN}
     cpus: "0.6"
     mem_limit: 1g
-    volumes: [hz-dreamjobs-translayer-data:/data, /var/run/docker.sock:/var/run/docker.sock]
+    volumes:
+      - hz-dreamjobs-translayer-data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
 
   hz-portal-mini-tools:
-    <<: *runner-base
+    build: https://github.com/SIMPLEWISHTH/infra-gh-runner.git#master
+    restart: unless-stopped
     container_name: hz-runner-portal-mini-tools
     environment:
       RUNNER_SCOPE_URL: https://github.com/digital-simplewish/portal-mini-tools
@@ -104,10 +147,13 @@ services:
       RUNNER_TOKEN: ${HZ_PORTAL_MINI_TOOLS_TOKEN}
     cpus: "0.5"
     mem_limit: 1g
-    volumes: [hz-portal-mini-tools-data:/data, /var/run/docker.sock:/var/run/docker.sock]
+    volumes:
+      - hz-portal-mini-tools-data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
 
   hz-phum-geo-engine:
-    <<: *runner-base
+    build: https://github.com/SIMPLEWISHTH/infra-gh-runner.git#master
+    restart: unless-stopped
     container_name: hz-runner-PHUM-GEO-engine
     environment:
       RUNNER_SCOPE_URL: https://github.com/digital-simplewish/PHUM-GEO-engine
@@ -116,10 +162,13 @@ services:
       RUNNER_TOKEN: ${HZ_PHUM_GEO_ENGINE_TOKEN}
     cpus: "0.5"
     mem_limit: 1g
-    volumes: [hz-phum-geo-engine-data:/data, /var/run/docker.sock:/var/run/docker.sock]
+    volumes:
+      - hz-phum-geo-engine-data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
 
   hz-limousine:
-    <<: *runner-base
+    build: https://github.com/SIMPLEWISHTH/infra-gh-runner.git#master
+    restart: unless-stopped
     container_name: hz-runner-limousine
     environment:
       RUNNER_SCOPE_URL: https://github.com/digital-simplewish/limousine
@@ -128,10 +177,13 @@ services:
       RUNNER_TOKEN: ${HZ_LIMOUSINE_TOKEN}
     cpus: "0.5"
     mem_limit: 1g
-    volumes: [hz-limousine-data:/data, /var/run/docker.sock:/var/run/docker.sock]
+    volumes:
+      - hz-limousine-data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
 
   hz-ai-plus:
-    <<: *runner-base
+    build: https://github.com/SIMPLEWISHTH/infra-gh-runner.git#master
+    restart: unless-stopped
     container_name: hz-runner-ai-plus
     environment:
       RUNNER_SCOPE_URL: https://github.com/digital-simplewish/ai-plus
@@ -140,23 +192,14 @@ services:
       RUNNER_TOKEN: ${HZ_AI_PLUS_TOKEN}
     cpus: "0.5"
     mem_limit: 1g
-    volumes: [hz-ai-plus-data:/data, /var/run/docker.sock:/var/run/docker.sock]
-
-  hz-omniroute:
-    <<: *runner-base
-    container_name: hz-runner-omniroute
-    environment:
-      RUNNER_SCOPE_URL: https://github.com/chatchawan-simplewish/OmniRoute
-      RUNNER_NAME: hz-runner-omniroute
-      RUNNER_LABELS: ubuntu-latest,omni-light,omni-build
-      RUNNER_TOKEN: ${HZ_OMNIROUTE_TOKEN}
-    cpus: "1"
-    mem_limit: 2g
-    volumes: [hz-omniroute-data:/data, /var/run/docker.sock:/var/run/docker.sock]
+    volumes:
+      - hz-ai-plus-data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
 
 volumes:
-  runner-data:
   hz-org-data:
+  hz-org-2-data:
+  hz-org-3-data:
   hz-dreamjob-web-data:
   hz-dreamjobs-platform-data:
   hz-dreamjobs-backend-data:
@@ -167,4 +210,3 @@ volumes:
   hz-phum-geo-engine-data:
   hz-limousine-data:
   hz-ai-plus-data:
-  hz-omniroute-data:
