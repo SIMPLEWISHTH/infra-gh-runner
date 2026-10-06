@@ -1,0 +1,173 @@
+# One service per runner scope. RUNNER_TOKEN values are injected by Coolify
+# env vars (${...}) at deploy time and are only needed the FIRST time a scope
+# registers; after that the registration persists in each service's volume.
+#
+# Per-service cpu/memory caps sum to ~80% of hetzner-sw02-fsn1 (16 vCPU / 32 GB):
+#   org + dreamjob-web get the big slices; the rest share smaller ones.
+
+x-runner-base: &runner-base
+  build: .
+  restart: unless-stopped
+  volumes:
+    - runner-data:/data
+    - /var/run/docker.sock:/var/run/docker.sock
+
+services:
+  hz-org:
+    <<: *runner-base
+    container_name: hz-runner-org
+    environment: &org-env
+      RUNNER_SCOPE_URL: https://github.com/SIMPLEWISHTH
+      RUNNER_NAME: hz-runner-org
+      RUNNER_LABELS: ubuntu-latest
+      RUNNER_TOKEN: ${HZ_ORG_TOKEN}
+    cpus: "4"
+    mem_limit: 8g
+    volumes: [hz-org-data:/data, /var/run/docker.sock:/var/run/docker.sock]
+
+  hz-dreamjob-web:
+    <<: *runner-base
+    container_name: hz-runner-dreamjob-web
+    environment:
+      RUNNER_SCOPE_URL: https://github.com/digital-simplewish/dreamjob-web
+      RUNNER_NAME: hz-runner-dreamjob-web
+      RUNNER_LABELS: ubuntu-latest
+      RUNNER_TOKEN: ${HZ_DREAMJOB_WEB_TOKEN}
+    cpus: "4"
+    mem_limit: 6g
+    volumes: [hz-dreamjob-web-data:/data, /var/run/docker.sock:/var/run/docker.sock]
+
+  hz-dreamjobs-platform:
+    <<: *runner-base
+    container_name: hz-runner-dreamjobs-platform
+    environment:
+      RUNNER_SCOPE_URL: https://github.com/digital-simplewish/dreamjobs-platform
+      RUNNER_NAME: hz-runner-dreamjobs-platform
+      RUNNER_LABELS: ubuntu-latest
+      RUNNER_TOKEN: ${HZ_DREAMJOBS_PLATFORM_TOKEN}
+    cpus: "0.6"
+    mem_limit: 1g
+    volumes: [hz-dreamjobs-platform-data:/data, /var/run/docker.sock:/var/run/docker.sock]
+
+  hz-dreamjobs-backend:
+    <<: *runner-base
+    container_name: hz-runner-dreamjobs-backend
+    environment:
+      RUNNER_SCOPE_URL: https://github.com/digital-simplewish/dreamjobs-backend
+      RUNNER_NAME: hz-runner-dreamjobs-backend
+      RUNNER_LABELS: ubuntu-latest
+      RUNNER_TOKEN: ${HZ_DREAMJOBS_BACKEND_TOKEN}
+    cpus: "0.6"
+    mem_limit: 1g
+    volumes: [hz-dreamjobs-backend-data:/data, /var/run/docker.sock:/var/run/docker.sock]
+
+  hz-dj-enrich-contract:
+    <<: *runner-base
+    container_name: hz-runner-dj-enrich-contract
+    environment:
+      RUNNER_SCOPE_URL: https://github.com/digital-simplewish/dj-enrich-contract
+      RUNNER_NAME: hz-runner-dj-enrich-contract
+      RUNNER_LABELS: ubuntu-latest
+      RUNNER_TOKEN: ${HZ_DJ_ENRICH_CONTRACT_TOKEN}
+    cpus: "0.6"
+    mem_limit: 1g
+    volumes: [hz-dj-enrich-contract-data:/data, /var/run/docker.sock:/var/run/docker.sock]
+
+  hz-dj-enrich-runner:
+    <<: *runner-base
+    container_name: hz-runner-dj-enrich-runner
+    environment:
+      RUNNER_SCOPE_URL: https://github.com/digital-simplewish/dj-enrich-runner
+      RUNNER_NAME: hz-runner-dj-enrich-runner
+      RUNNER_LABELS: ubuntu-latest
+      RUNNER_TOKEN: ${HZ_DJ_ENRICH_RUNNER_TOKEN}
+    cpus: "0.6"
+    mem_limit: 1g
+    volumes: [hz-dj-enrich-runner-data:/data, /var/run/docker.sock:/var/run/docker.sock]
+
+  hz-dreamjobs-translayer:
+    <<: *runner-base
+    container_name: hz-runner-dreamjobs-translayer
+    environment:
+      RUNNER_SCOPE_URL: https://github.com/digital-simplewish/dreamjobs-translayer
+      RUNNER_NAME: hz-runner-dreamjobs-translayer
+      RUNNER_LABELS: ubuntu-latest
+      RUNNER_TOKEN: ${HZ_DREAMJOBS_TRANSLAYER_TOKEN}
+    cpus: "0.6"
+    mem_limit: 1g
+    volumes: [hz-dreamjobs-translayer-data:/data, /var/run/docker.sock:/var/run/docker.sock]
+
+  hz-portal-mini-tools:
+    <<: *runner-base
+    container_name: hz-runner-portal-mini-tools
+    environment:
+      RUNNER_SCOPE_URL: https://github.com/digital-simplewish/portal-mini-tools
+      RUNNER_NAME: hz-runner-portal-mini-tools
+      RUNNER_LABELS: ubuntu-latest
+      RUNNER_TOKEN: ${HZ_PORTAL_MINI_TOOLS_TOKEN}
+    cpus: "0.5"
+    mem_limit: 1g
+    volumes: [hz-portal-mini-tools-data:/data, /var/run/docker.sock:/var/run/docker.sock]
+
+  hz-phum-geo-engine:
+    <<: *runner-base
+    container_name: hz-runner-PHUM-GEO-engine
+    environment:
+      RUNNER_SCOPE_URL: https://github.com/digital-simplewish/PHUM-GEO-engine
+      RUNNER_NAME: hz-runner-PHUM-GEO-engine
+      RUNNER_LABELS: ubuntu-latest
+      RUNNER_TOKEN: ${HZ_PHUM_GEO_ENGINE_TOKEN}
+    cpus: "0.5"
+    mem_limit: 1g
+    volumes: [hz-phum-geo-engine-data:/data, /var/run/docker.sock:/var/run/docker.sock]
+
+  hz-limousine:
+    <<: *runner-base
+    container_name: hz-runner-limousine
+    environment:
+      RUNNER_SCOPE_URL: https://github.com/digital-simplewish/limousine
+      RUNNER_NAME: hz-runner-limousine
+      RUNNER_LABELS: ubuntu-latest
+      RUNNER_TOKEN: ${HZ_LIMOUSINE_TOKEN}
+    cpus: "0.5"
+    mem_limit: 1g
+    volumes: [hz-limousine-data:/data, /var/run/docker.sock:/var/run/docker.sock]
+
+  hz-ai-plus:
+    <<: *runner-base
+    container_name: hz-runner-ai-plus
+    environment:
+      RUNNER_SCOPE_URL: https://github.com/digital-simplewish/ai-plus
+      RUNNER_NAME: hz-runner-ai-plus
+      RUNNER_LABELS: ubuntu-latest
+      RUNNER_TOKEN: ${HZ_AI_PLUS_TOKEN}
+    cpus: "0.5"
+    mem_limit: 1g
+    volumes: [hz-ai-plus-data:/data, /var/run/docker.sock:/var/run/docker.sock]
+
+  hz-omniroute:
+    <<: *runner-base
+    container_name: hz-runner-omniroute
+    environment:
+      RUNNER_SCOPE_URL: https://github.com/chatchawan-simplewish/OmniRoute
+      RUNNER_NAME: hz-runner-omniroute
+      RUNNER_LABELS: ubuntu-latest,omni-light,omni-build
+      RUNNER_TOKEN: ${HZ_OMNIROUTE_TOKEN}
+    cpus: "1"
+    mem_limit: 2g
+    volumes: [hz-omniroute-data:/data, /var/run/docker.sock:/var/run/docker.sock]
+
+volumes:
+  runner-data:
+  hz-org-data:
+  hz-dreamjob-web-data:
+  hz-dreamjobs-platform-data:
+  hz-dreamjobs-backend-data:
+  hz-dj-enrich-contract-data:
+  hz-dj-enrich-runner-data:
+  hz-dreamjobs-translayer-data:
+  hz-portal-mini-tools-data:
+  hz-phum-geo-engine-data:
+  hz-limousine-data:
+  hz-ai-plus-data:
+  hz-omniroute-data:
