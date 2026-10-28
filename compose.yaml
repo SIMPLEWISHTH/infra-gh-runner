@@ -1,3 +1,6 @@
+# 2026-10-28: repo-scoped hz runner floor raised to cpus 4 / mem 6g after the dreamjobs-platform OOM (exit 137) incident.
+# Production truth lives in the Coolify DB compose (fleet service 24tldf54b3j0sir3u5sonnx0 + harnes rgkycbqo5ioemowfyrm3yksl)
+# and /root/org-extra.yaml on hetzner-sw02 — this template has drifted from production; do not deploy it verbatim.
 # Runner fleet on hetzner-sw02-fsn1 (generated; caps total ~80% of 16vCPU/32GB).
 # 3 org slots (2cpu/4g each) + repo-scoped pairs. hz-omniroute removed (repo archived).
 services:
@@ -70,8 +73,8 @@ services:
       RUNNER_NAME: hz-runner-dreamjobs-platform
       RUNNER_LABELS: ubuntu-latest
       RUNNER_TOKEN: ${HZ_DREAMJOBS_PLATFORM_TOKEN}
-    cpus: "0.6"
-    mem_limit: 1g
+    cpus: "4"
+    mem_limit: 6g
     volumes:
       - hz-dreamjobs-platform-data:/data
       - /var/run/docker.sock:/var/run/docker.sock
@@ -85,8 +88,8 @@ services:
       RUNNER_NAME: hz-runner-dreamjobs-backend
       RUNNER_LABELS: ubuntu-latest
       RUNNER_TOKEN: ${HZ_DREAMJOBS_BACKEND_TOKEN}
-    cpus: "0.6"
-    mem_limit: 1g
+    cpus: "4"
+    mem_limit: 6g
     volumes:
       - hz-dreamjobs-backend-data:/data
       - /var/run/docker.sock:/var/run/docker.sock
@@ -100,8 +103,8 @@ services:
       RUNNER_NAME: hz-runner-dj-enrich-contract
       RUNNER_LABELS: ubuntu-latest
       RUNNER_TOKEN: ${HZ_DJ_ENRICH_CONTRACT_TOKEN}
-    cpus: "0.6"
-    mem_limit: 1g
+    cpus: "4"
+    mem_limit: 6g
     volumes:
       - hz-dj-enrich-contract-data:/data
       - /var/run/docker.sock:/var/run/docker.sock
@@ -115,8 +118,8 @@ services:
       RUNNER_NAME: hz-runner-dj-enrich-runner
       RUNNER_LABELS: ubuntu-latest
       RUNNER_TOKEN: ${HZ_DJ_ENRICH_RUNNER_TOKEN}
-    cpus: "0.6"
-    mem_limit: 1g
+    cpus: "4"
+    mem_limit: 6g
     volumes:
       - hz-dj-enrich-runner-data:/data
       - /var/run/docker.sock:/var/run/docker.sock
@@ -130,8 +133,8 @@ services:
       RUNNER_NAME: hz-runner-dreamjobs-translayer
       RUNNER_LABELS: ubuntu-latest
       RUNNER_TOKEN: ${HZ_DREAMJOBS_TRANSLAYER_TOKEN}
-    cpus: "0.6"
-    mem_limit: 1g
+    cpus: "4"
+    mem_limit: 6g
     volumes:
       - hz-dreamjobs-translayer-data:/data
       - /var/run/docker.sock:/var/run/docker.sock
@@ -145,8 +148,8 @@ services:
       RUNNER_NAME: hz-runner-portal-mini-tools
       RUNNER_LABELS: ubuntu-latest
       RUNNER_TOKEN: ${HZ_PORTAL_MINI_TOOLS_TOKEN}
-    cpus: "0.5"
-    mem_limit: 1g
+    cpus: "4"
+    mem_limit: 6g
     volumes:
       - hz-portal-mini-tools-data:/data
       - /var/run/docker.sock:/var/run/docker.sock
@@ -160,8 +163,8 @@ services:
       RUNNER_NAME: hz-runner-PHUM-GEO-engine
       RUNNER_LABELS: ubuntu-latest
       RUNNER_TOKEN: ${HZ_PHUM_GEO_ENGINE_TOKEN}
-    cpus: "0.5"
-    mem_limit: 1g
+    cpus: "4"
+    mem_limit: 6g
     volumes:
       - hz-phum-geo-engine-data:/data
       - /var/run/docker.sock:/var/run/docker.sock
@@ -175,8 +178,8 @@ services:
       RUNNER_NAME: hz-runner-limousine
       RUNNER_LABELS: ubuntu-latest
       RUNNER_TOKEN: ${HZ_LIMOUSINE_TOKEN}
-    cpus: "0.5"
-    mem_limit: 1g
+    cpus: "4"
+    mem_limit: 6g
     volumes:
       - hz-limousine-data:/data
       - /var/run/docker.sock:/var/run/docker.sock
@@ -190,8 +193,8 @@ services:
       RUNNER_NAME: hz-runner-ai-plus
       RUNNER_LABELS: ubuntu-latest
       RUNNER_TOKEN: ${HZ_AI_PLUS_TOKEN}
-    cpus: "0.5"
-    mem_limit: 1g
+    cpus: "4"
+    mem_limit: 6g
     volumes:
       - hz-ai-plus-data:/data
       - /var/run/docker.sock:/var/run/docker.sock
